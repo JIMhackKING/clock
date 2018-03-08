@@ -1,0 +1,6 @@
+".\Objects\Clock.obj",
+".\Objects\SystemFunc.obj",
+".\Objects\Keys.obj",
+".\Objects\UART.obj" 
+TO ".\Objects\Clock" 
+PRINT(".\Listings\Clock.m51") RAMSIZE(256) 

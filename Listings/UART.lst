@@ -1,0 +1,116 @@
+C51 COMPILER V9.56.0.0   UART                                                              02/16/2018 13:17:11 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN .\Objects\UART.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE code\UART.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\UART.lst) TABS(2) OBJECT(.\Objects\UART.obj)
+
+line level    source
+
+   1          #include "SystemFunc.h"
+   2          #include <string.h>
+   3          
+   4          uchar data_len=0;  // 指令长度标志位
+   5          uchar data_len_bak=0;
+   6          bit receive_complete=0;  // 数据接收完成标志位
+   7          char recv[11];  // 接收数据缓冲区， char 类型用于比较字符串, 长度加 1 是为了加 \0
+   8          extern int clock[4];
+   9          
+  10          /********************************************************************
+  11          * 名称 : UART_init()
+  12          * 功能 : 初始化串口程序，晶振11.0592, 波特率9600
+  13          * 输入 : 无
+  14          * 输出 : 无
+  15          ***********************************************************************/
+  16          void UART_init(void)
+  17          {
+  18   1        TMOD|=0x20;  // 设置定时器1为工作方式2（8位自动重载），高八位为重载常数，溢�
+             -�时低八位自动从高八位取初值
+  19   1        TH1=0xfd;  // 9600 波特率
+  20   1        TL1=0xfd;
+  21   1        TR1=1;
+  22   1        EA=1;
+  23   1        ES=1;  // 串口中断允许
+  24   1        REN=1;
+  25   1        SM0=0;
+  26   1        SM1=1;
+  27   1      }
+  28          
+  29          void send(uchar d)
+  30          {
+  31   1        SBUF=d;
+  32   1        while(!TI);
+  33   1        TI=0;
+  34   1      }
+  35          
+  36          void sendarr(uchar *pd, uchar len)
+  37          {
+  38   1        // 发送一个数组
+  39   1        while(len--)
+  40   1        {
+  41   2          send(*pd);
+  42   2          pd++;
+  43   2        }
+  44   1      }
+  45          
+  46          /************************************************
+  47          作用：串口中断函数
+  48          ************************************************/
+  49          void uart(void) interrupt 4 // 串口中断
+  50          {
+  51   1        if(RI)  // 收到数据
+  52   1        {
+  53   2          if(data_len==0)
+C51 COMPILER V9.56.0.0   UART                                                              02/16/2018 13:17:11 PAGE 2   
+
+  54   2          {
+  55   3            data_len=SBUF;  // 如果 data_len 为0，即没收到数据，于是就初始化数据长度
+  56   3            data_len_bak=data_len;
+  57   3          }
+  58   2          else
+  59   2          {
+  60   3            recv[data_len_bak - data_len] = SBUF;
+  61   3            data_len--;
+  62   3            if(data_len==0) receive_complete=1;  // 如果 data_len 减到0，即数据已接收完成
+  63   3          }
+  64   2          RI=0;
+  65   2        }
+  66   1      }
+  67          
+  68          void deal_cmd(void)
+  69          {
+  70   1        if(data_len_bak>10)
+  71   1        {
+  72   2          ES=0;
+  73   2          sendarr("Error: Command length too long!\r\nThe maximum allowable length is 10\r\n", 69);
+  74   2          Delay(500);
+  75   2          ES=1;
+  76   2          data_len = 0;
+  77   2          data_len_bak=0;
+  78   2        }
+  79   1        else if(receive_complete)
+  80   1        {
+  81   2          receive_complete=0;
+  82   2          ES=0;
+  83   2          recv[data_len_bak] = '\0';  // 给接收到的数据最后加上 \0 用于比较字符串
+  84   2          if(strcmp(recv, "clock")==0)  sendarr(clock, 8);
+*** WARNING C182 IN LINE 84 OF code\UART.c: pointer to different objects
+  85   2          //send('Y');
+  86   2          ES=1;
+  87   2        }
+  88   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    180    ----
+   CONSTANT SIZE    =     76    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     13    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
