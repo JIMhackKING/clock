@@ -1,6 +1,0 @@
-".\Objects\Clock.obj",
-".\Objects\SystemFunc.obj",
-".\Objects\Keys.obj",
-".\Objects\eeprom.obj" 
-TO ".\Objects\Clock" 
-PRINT(".\Listings\Clock.m51") RAMSIZE(256) 
