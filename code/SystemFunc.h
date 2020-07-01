@@ -1,3 +1,6 @@
+#ifndef __SystemFunc_H
+#define __SystemFunc_H
+
 #include <reg52.h>
 
 /************************************************
@@ -15,3 +18,5 @@ void sub_time(void);
 void key_press(void);
 void deal_cmd(void);
 void UART_init(void);
+
+#endif

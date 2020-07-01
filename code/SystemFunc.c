@@ -38,11 +38,14 @@ void Bin2Bcd(int time)
 void display(void)
 {
 	uchar i;
+	uchar is_open = 0;
 	for(i=0;i<4;i++)
 	{
-		P2=~(0x08>>i);
+		is_open = (P2 & 0x20) | 0xdf;
+		P2 = is_open & ~(0x08>>i);
 		P0=Dis_code[dis_buff[i]];
 		Delay(1);
+		P0 = 0xff;
 	}
 }
 

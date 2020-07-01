@@ -1,10 +1,10 @@
-C51 COMPILER V9.56.0.0   UART                                                              02/16/2018 13:17:11 PAGE 1   
+C51 COMPILER V9.59.0.0   UART                                                              04/28/2019 18:38:26 PAGE 1   
 
 
-C51 COMPILER V9.56.0.0, COMPILATION OF MODULE UART
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE UART
 OBJECT MODULE PLACED IN .\Objects\UART.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE code\UART.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
-                    -\UART.lst) TABS(2) OBJECT(.\Objects\UART.obj)
+COMPILER INVOKED BY: D:\KEIL_C51\C51\BIN\C51.EXE code\UART.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\UART.lst) TABS(2) OBJECT(.\Objects\UART.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   51   1        if(RI)  // 收到数据
   52   1        {
   53   2          if(data_len==0)
-C51 COMPILER V9.56.0.0   UART                                                              02/16/2018 13:17:11 PAGE 2   
+C51 COMPILER V9.59.0.0   UART                                                              04/28/2019 18:38:26 PAGE 2   
 
   54   2          {
   55   3            data_len=SBUF;  // 如果 data_len 为0，即没收到数据，于是就初始化数据长度
@@ -103,7 +103,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    180    ----
+   CODE SIZE        =    191    ----
    CONSTANT SIZE    =     76    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

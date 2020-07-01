@@ -1,117 +1,138 @@
-C51 COMPILER V9.56.0.0   KEYS                                                              02/16/2018 06:15:50 PAGE 1   
+C51 COMPILER V9.59.0.0   KEYS                                                              05/01/2019 02:00:45 PAGE 1   
 
 
-C51 COMPILER V9.56.0.0, COMPILATION OF MODULE KEYS
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE KEYS
 OBJECT MODULE PLACED IN .\Objects\Keys.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE code\Keys.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
-                    -\Keys.lst) TABS(2) OBJECT(.\Objects\Keys.obj)
+COMPILER INVOKED BY: D:\KEIL_C51\C51\BIN\C51.EXE code\Keys.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\Keys.lst) TABS(2) OBJECT(.\Objects\Keys.obj)
 
 line level    source
 
    1          #include "SystemFunc.h"
-   2          
-   3          extern uchar MODE;
-   4          extern int clock[4];
-   5          
-   6          // 加时
-   7          void add_time(void)
-   8          {
-   9   1        clock[MODE]++;
-  10   1        if(clock[MODE]==1440)
-  11   1          clock[MODE]=0;
-  12   1      }
-  13          
-  14          // 减时
-  15          void sub_time(void)
-  16          {
-  17   1        clock[MODE]--;
-  18   1        if(clock[MODE]<0)
-  19   1          clock[MODE]=1439;
-  20   1      }
-  21          
-  22          /************************************************
-  23          作用：按钮一响应函数
-  24          ************************************************/
-  25          void key1_down(void)
-  26          {
-  27   1        uchar i,j=20,n=3;
-  28   1        Delay(5);
-  29   1        while(P3==0xef)
-  30   1        {
-  31   2          add_time();
-  32   2          if(n==0)
-  33   2          {
-  34   3            j-=5;
-  35   3            n=3;
-  36   3          }
-  37   2          if(j<5) j=5;
-  38   2          n-=1;
-  39   2          for(i=0;i<j;i++)
-  40   2          {
-  41   3            Bin2Bcd(clock[MODE]);
-  42   3            display();
-  43   3          }
-  44   2        }
-  45   1      }
-  46          
-  47          /************************************************
-  48          作用：按钮二响应函数
-  49          ************************************************/
-  50          void key2_down(void)
-  51          {
-  52   1        uchar i,j=20,n=3;
-  53   1        Delay(5);
-  54   1        while(P3==0xdf)
-C51 COMPILER V9.56.0.0   KEYS                                                              02/16/2018 06:15:50 PAGE 2   
+   2          #include "eeprom.h"
+   3          
+   4          extern uchar MODE;
+   5          extern int clock[4];
+   6          sbit KEY1 = P3^4;
+   7          sbit KEY2 = P3^5;
+   8          sbit KEY3 = P3^2;
+   9          
+  10          // 加时
+  11          void add_time(void)
+  12          {
+  13   1        clock[MODE]++;
+  14   1        if(clock[MODE]>=1440)
+  15   1          clock[MODE]=0;
+  16   1      }
+  17          
+  18          // 减时
+  19          void sub_time(void)
+  20          {
+  21   1        clock[MODE]--;
+  22   1        if(clock[MODE]<0)
+  23   1          clock[MODE]=1439;
+  24   1      }
+  25          
+  26          /************************************************
+  27          作用：按钮一响应函数
+  28          ************************************************/
+  29          void key1_down(void)
+  30          {
+  31   1        uchar i,j=20,n=3;
+  32   1        Delay(5);  // 延时消抖
+  33   1        while(KEY1 == 0)
+  34   1        {
+  35   2          add_time();
+  36   2          if(n==0)  // 如果按键一直按下那么数字变化时间越来越快
+  37   2          {
+  38   3            j-=5;
+  39   3            n=3;
+  40   3          }
+  41   2          if(j<5) j=5;
+  42   2          n-=1;
+  43   2          for(i=0;i<j;i++)
+  44   2          {
+  45   3            Bin2Bcd(clock[MODE]);
+  46   3            display();
+  47   3          }
+  48   2        }
+  49   1      }
+  50          
+  51          /************************************************
+  52          作用：按钮二响应函数
+  53          ************************************************/
+  54          void key2_down(void)
+C51 COMPILER V9.59.0.0   KEYS                                                              05/01/2019 02:00:45 PAGE 2   
 
-  55   1        {
-  56   2          sub_time();
-  57   2          if(n==0)
-  58   2          {
-  59   3            j-=5;
-  60   3            n=3;
-  61   3          }
-  62   2          if(j<5) j=5;
-  63   2          n-=1;
-  64   2          for(i=0;i<j;i++)
-  65   2          {
-  66   3            Bin2Bcd(clock[MODE]);
-  67   3            display();
-  68   3          }
-  69   2        }
-  70   1      }
-  71          
-  72          /************************************************
-  73          作用：按钮三响应函数
-  74          ************************************************/
-  75          void key3_down(void)
-  76          {
-  77   1        uchar i;
-  78   1        Delay(2);
-  79   1        if(P3==0xfb)
-  80   1        {
-  81   2          MODE++;
-  82   2          if(MODE==4)
-  83   2            MODE=0;
-  84   2        }
-  85   1        for(i=0;i<30;i++)
-  86   1        {
-  87   2          Bin2Bcd(clock[MODE]);
-  88   2          display();
-  89   2        }
-  90   1      }
-  91          
-  92          // 判断哪个按钮被按下并作出处理
-  93          void key_press(void)
-  94          {
-  95   1        if(P3==0xef) key1_down();
-  96   1        else if(P3==0xdf) key2_down();
-  97   1        else if(P3==0xfb) key3_down();
-  98   1      }
+  55          {
+  56   1        uchar i,j=20,n=3;
+  57   1        Delay(5);  // 延时消抖
+  58   1        while(KEY2 == 0)
+  59   1        {
+  60   2          sub_time();
+  61   2          if(n==0)  // 如果按键一直按下那么数字变化时间越来越快
+  62   2          {
+  63   3            j-=5;
+  64   3            n=3;
+  65   3          }
+  66   2          if(j<5) j=5;
+  67   2          n-=1;
+  68   2          for(i=0;i<j;i++)
+  69   2          {
+  70   3            Bin2Bcd(clock[MODE]);
+  71   3            display();
+  72   3          }
+  73   2        }
+  74   1      }
+  75          
+  76          /************************************************
+  77          作用：按钮三响应函数
+  78          ************************************************/
+  79          void key3_down(void)
+  80          {
+  81   1        uchar i;
+  82   1        Delay(2);
+  83   1        if(KEY3 == 0)
+  84   1        {
+  85   2          if(MODE == 1)  // 向eeprom写入第一个闹钟的时间
+  86   2          {
+  87   3            eeprom_write_byte(0x2800, (uchar)clock[MODE]);
+  88   3            eeprom_write_byte(0x2801, (uchar)(clock[MODE] >> 8));
+  89   3          }
+  90   2          else if (MODE == 2)  // 向eeprom写入第二个闹钟的时间
+  91   2          {
+  92   3            eeprom_write_byte(0x2802, (uchar)clock[MODE]);
+  93   3            eeprom_write_byte(0x2803, (uchar)(clock[MODE] >> 8));
+  94   3          }
+  95   2          MODE++;  // 改变显示的模式
+  96   2          if(MODE==3)
+  97   2            MODE=0;
+  98   2        }
+  99   1        for(i=0;i<30;i++)
+ 100   1        {
+ 101   2          Bin2Bcd(clock[MODE]);
+ 102   2          display();
+ 103   2        }
+ 104   1      }
+ 105          
+ 106          // 判断哪个按钮被按下并作出处理
+ 107          void key_press(void)
+ 108          {
+ 109   1        if(P3==0xef) key1_down();
+ 110   1        else if(P3==0xdf) key2_down();
+ 111   1        else if(P3==0xfb) 
+ 112   1        {
+ 113   2          key3_down();
+ 114   2          P1 &= 0xf0;  // 保持其他位不变
+ 115   2          P1 |= 0x0f & ~(1<<MODE);
+ 116   2        }
+C51 COMPILER V9.59.0.0   KEYS                                                              05/01/2019 02:00:45 PAGE 3   
+
+ 117   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    326    ----
+   CODE SIZE        =    453    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

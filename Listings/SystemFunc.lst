@@ -1,10 +1,10 @@
-C51 COMPILER V9.56.0.0   SYSTEMFUNC                                                        02/16/2018 06:32:37 PAGE 1   
+C51 COMPILER V9.59.0.0   SYSTEMFUNC                                                        04/30/2019 00:28:34 PAGE 1   
 
 
-C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SYSTEMFUNC
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE SYSTEMFUNC
 OBJECT MODULE PLACED IN .\Objects\SystemFunc.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE code\SystemFunc.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Li
-                    -stings\SystemFunc.lst) TABS(2) OBJECT(.\Objects\SystemFunc.obj)
+COMPILER INVOKED BY: D:\KEIL_C51\C51\BIN\C51.EXE code\SystemFunc.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\L
+                    -istings\SystemFunc.lst) TABS(2) OBJECT(.\Objects\SystemFunc.obj)
 
 line level    source
 
@@ -48,39 +48,42 @@ line level    source
   38          void display(void)
   39          {
   40   1        uchar i;
-  41   1        for(i=0;i<4;i++)
-  42   1        {
-  43   2          P2=~(0x08>>i);
-  44   2          P0=Dis_code[dis_buff[i]];
-  45   2          Delay(1);
-  46   2        }
-  47   1      }
-  48          
-  49          /************************************************
-  50          作用：初始化中断
-  51          ************************************************/
-  52          void INT_Init(void)
-  53          {
-  54   1        TMOD=0x01;  // 设置定时器0为工作方式1，16位定时/计数器
-C51 COMPILER V9.56.0.0   SYSTEMFUNC                                                        02/16/2018 06:32:37 PAGE 2   
+  41   1        uchar is_open = 0;
+  42   1        for(i=0;i<4;i++)
+  43   1        {
+  44   2          is_open = (P2 & 0x20) | 0xdf;
+  45   2          P2 = is_open & ~(0x08>>i);
+  46   2          P0=Dis_code[dis_buff[i]];
+  47   2          Delay(1);
+  48   2          P0 = 0xff;
+  49   2        }
+  50   1      }
+  51          
+  52          /************************************************
+  53          作用：初始化中断
+  54          ************************************************/
+C51 COMPILER V9.59.0.0   SYSTEMFUNC                                                        04/30/2019 00:28:34 PAGE 2   
 
-  55   1        // 50ms 请求一次中断
-  56   1        TH0=0x4c;  // 高8位定时器初值
-  57   1        TL0=0x00;  // 低8位定时器初值
-  58   1        EA=1;  // 开总中断
-  59   1        ET0=1;  // 定时器0中断允许
-  60   1        TR0=1;  // 启动定时器0，开始计数
-  61   1        EX1=1;
-  62   1        IT1=1;
-  63   1      }
+  55          void INT_Init(void)
+  56          {
+  57   1        TMOD=0x01;  // 设置定时器0为工作方式1，16位定时/计数器
+  58   1        // 50ms 请求一次中断
+  59   1        TH0=0x4c;  // 高8位定时器初值
+  60   1        TL0=0x00;  // 低8位定时器初值
+  61   1        EA=1;  // 开总中断
+  62   1        ET0=1;  // 定时器0中断允许
+  63   1        TR0=1;  // 启动定时器0，开始计数
+  64   1        EX1=1;
+  65   1        IT1=1;
+  66   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    174    ----
+   CODE SIZE        =    198    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       2
+   DATA SIZE        =   ----       3
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
